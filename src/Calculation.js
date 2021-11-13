@@ -9,7 +9,7 @@ export default function Calculation(props) {
         median: 0,
         mode: 0,
         stdDev: 0,
-        list : []
+        list: []
     });
 
     useEffect(() => {
@@ -20,7 +20,6 @@ export default function Calculation(props) {
             let arr = [];
             data.docs.forEach(element => {
                 arr.push(element.data().no);
-
             });
 
             setRes({
@@ -29,7 +28,7 @@ export default function Calculation(props) {
                 median: calMedian(arr),
                 mode: calMode(arr),
                 stdDev: getStandardDeviation(arr),
-                list : arr
+                list: arr
             });
 
         }
@@ -38,9 +37,9 @@ export default function Calculation(props) {
 
     useEffect(() => {
         //Adding Newnumber to the Array
-        
+        let arr = [...res.list];
         if (newNumber !== 0) {
-            let arr = [...res.list,  parseInt(newNumber)];
+            arr.push(parseInt(newNumber));
             setRes({
                 ...res,
                 mean: calMean(arr),
@@ -48,37 +47,26 @@ export default function Calculation(props) {
                 mode: calMode(arr),
                 stdDev: getStandardDeviation(arr)
             });
+
         }
+
     }, [newNumber]);
 
 
     //Calculates the Mean
     const calMean = (arr) => {
-        var sum = (arr.reduce((a, v) => a = a + v, 0));
-        var len = (newNumber !== 0 ? arr.length + 1 : arr.length);
-        var mean = (sum + parseInt(newNumber)) / len;
         if (arr === null || arr === undefined)
             return 0;
-        else
-            return mean.toFixed(4);
+        var sum = (arr.reduce((a, v) => a = a + v, 0));
+        var mean = sum / arr.length;
+        return mean.toFixed(4);
     }
 
     //Calculates the Median
     const calMedian = (arr) => {
         let n = arr.length;
         let mid = parseInt(n / 2);
-
-        //Soritng the Array
-        for (let i = 0; i < n; i++) {
-            //Inner pass
-            for (let j = 0; j < n - i - 1; j++) {
-                if (arr[j + 1] < arr[j]) {
-                    //Swapping
-                    [arr[j + 1], arr[j]] = [arr[j], arr[j + 1]]
-                }
-            }
-        }
-
+        arr.sort();
         var median = (n % 2 === 0 ? (arr[mid] + arr[mid - 1]) / 2 : arr[mid]);
         return median.toFixed(4);
     }
@@ -95,12 +83,10 @@ export default function Calculation(props) {
             count[e]++;
         });
 
-        console.log(count)
         let bestElement = 0.0;
         let bestCount = 0;
 
         Object.entries(count).forEach(([k, v]) => {
-            console.log(k, v)
             if (v > bestCount && v > 1) {
                 bestElement = k * 1.0;
                 bestCount = v;
@@ -115,7 +101,6 @@ export default function Calculation(props) {
         const n = array.length;
         const mean = calMean(array);
         let number = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-
 
         return number.toFixed(4);
     }
